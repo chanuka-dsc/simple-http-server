@@ -3,24 +3,24 @@ package com.simple.server;
 import com.simple.server.config.Configuration;
 import com.simple.server.config.ConfigurationManager;
 import com.simple.server.core.ServerListenerThread;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class HttpSever {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(HttpSever.class);
+
     public static  void main (String[] args) {
 
-        System.out.println("Server Starting ...");
+
+        LOGGER.info("Server Starting ...");
 
         ConfigurationManager.getInstance().loadConfigurationFile("src/main/resources/http.json");
         Configuration conf =  ConfigurationManager.getInstance().getCurrentConfiguration();
 
-        System.out.println("Using Port: " + conf.getPort());
-        System.out.println("Using WebRoot: " + conf.getWebroot());
+        LOGGER.info("Using Port: " + conf.getPort());
+        LOGGER.info("Using WebRoot: " + conf.getWebroot());
 
         ServerListenerThread serverListenerThread;
 

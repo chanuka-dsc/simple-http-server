@@ -1,5 +1,9 @@
 package com.simple.server.core;
 
+import com.simple.server.HttpSever;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,7 +14,8 @@ public class ServerListenerThread extends  Thread {
 
     private int port;
     private String webRoot;
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
+    private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
 
     public ServerListenerThread(int port, String webRoot) throws IOException {
         this.port = port;
@@ -20,31 +25,34 @@ public class ServerListenerThread extends  Thread {
 
     @Override
     public void run() {
+
+
         try {
-            Socket socket = serverSocket.accept();
 
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
+            while (serverSocket.isBound() && !serverSocket.isClosed()) {
+                Socket socket = serverSocket.accept();
 
-            String html = "<!DOCTYPE html> <html> <head><title>My server</title></head><body> <h1>Wel come to my page</h1> <p>Glad to see you here</p> </body> </html>";
+                LOGGER.info("Connection accepted: " + socket.getInetAddress());
 
-            final String CRLF = "\n\r"; // 13, 10 ascii
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
+                workerThread.start();
+            }
 
-            String response =
-                    "HTTP/1.1 200 OK" + CRLF + // Status Line :HTTP VERSION RESPONSE_CODE RESPONSE_MESSAGE
-                            "Content-Length: " + html.getBytes().length + CRLF +//HEADER
-                            CRLF +
-                            html + // HTML
-                            CRLF;
-
-            outputStream.write(response.getBytes());
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-            serverSocket.close();
+            // TODO handle later
+            //serverSocket.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+           LOGGER.info("Problem with setting socket", e);
+        } finally {
+
+            if(serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 }
