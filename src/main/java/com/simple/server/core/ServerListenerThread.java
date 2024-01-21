@@ -1,12 +1,8 @@
 package com.simple.server.core;
 
-import com.simple.server.HttpSever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,9 +33,6 @@ public class ServerListenerThread extends  Thread {
                 HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
                 workerThread.start();
             }
-
-            // TODO handle later
-            //serverSocket.close();
 
         } catch (IOException e) {
            LOGGER.info("Problem with setting socket", e);

@@ -28,6 +28,12 @@ public class HttpConnectionWorkerThread extends Thread {
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
+            int _byte = inputStream.read();
+
+            while ((_byte = inputStream.read()) >= 0){
+                System.out.print((char) _byte);
+            }
+
             String html = "<!DOCTYPE html> <html> <head><title>My server</title></head><body> <h1>Wel come to my page</h1> <p>Glad to see you here</p> </body> </html>";
 
             final String CRLF = "\n\r"; // 13, 10 ascii
